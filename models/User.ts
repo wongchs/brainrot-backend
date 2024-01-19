@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { UserInterface } from "../types";
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -25,4 +26,4 @@ UserSchema.set("toJSON", {
   },
 });
 
-export default mongoose.model("User", UserSchema);
+export default mongoose.model<UserInterface>("User", UserSchema);
