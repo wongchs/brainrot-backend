@@ -2,6 +2,7 @@ import { MONGODB_URI, PORT } from "./utils/config";
 import express from "express";
 import usersRouter from "./routes/users";
 import loginRouter from "./routes/login";
+import postsRouter from "./routes/posts";
 const app = express();
 app.use(express.json());
 import { info, errorLog } from "./utils/logger";
@@ -31,6 +32,7 @@ app.get("/ping", (_req, res) => {
 
 app.use("/api/users", usersRouter);
 app.use("/api/login", loginRouter);
+app.use("/api/posts", postsRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
