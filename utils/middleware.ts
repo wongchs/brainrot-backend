@@ -38,12 +38,8 @@ const tokenExtractor = (request: RequestWithUser, _response, next) => {
 };
 
 const userExtractor = async (request: RequestWithUser, response, next) => {
-  if (!request.token) {
-    return response.status(401).json({ error: "token missing" });
-  }
-
   const decodedToken = jwt.verify(request.token, process.env.SECRET);
-  if (typeof decodedToken === "object" && "id" in decodedToken) {
+  if (typeof decodedToken === 'object' && 'id' in decodedToken) {
     request.user = await User.findById(decodedToken.id);
     next();
   } else {

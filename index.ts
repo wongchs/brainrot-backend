@@ -7,6 +7,7 @@ const app = express();
 app.use(express.json());
 import { info, errorLog } from "./utils/logger";
 import mongoose from "mongoose";
+import { requestLogger, tokenExtractor } from "./utils/middleware";
 
 mongoose.set("strictQuery", false);
 
@@ -15,6 +16,9 @@ if (!MONGODB_URI) {
 }
 
 info("connecting to", MONGODB_URI);
+
+app.use(requestLogger);
+app.use(tokenExtractor);
 
 mongoose
   .connect(MONGODB_URI)
