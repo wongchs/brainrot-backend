@@ -33,4 +33,30 @@ postsRouter.post("/", userExtractor, async (req: RequestWithUser, res) => {
   return res.status(201).json(savedPost);
 });
 
+postsRouter.get("/:id", async (req, res) => {
+  const post = await Post.findById(req.params.id).populate("user", {
+    username: 1,
+    name: 1,
+    id: 1,
+  });
+
+  if (post) {
+    res.json(post);
+  } else {
+    res.status(404).json({ error: "post not found" }).end();
+  }
+});
+
+postsRouter.delete("/:id", userExtractor, async (req: RequestWithUser, res) => {
+  const user = req.user;
+  const postToDelete = await Post.findById(req.params.id);
+
+  if (user.id.toString() === postToDelete.user.toString()) {
+    await Post.findByIdAndDelete(req.params.id);
+    res.status(204).end();
+  } else {
+    res.status(403).json({ error: "invalid credentials" });
+  }
+});
+
 export default postsRouter;

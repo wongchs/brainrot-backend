@@ -4,6 +4,7 @@ import usersRouter from "./routes/users";
 import loginRouter from "./routes/login";
 import postsRouter from "./routes/posts";
 const app = express();
+import cors from "cors";
 app.use(express.json());
 import { info, errorLog } from "./utils/logger";
 import mongoose from "mongoose";
@@ -17,6 +18,7 @@ if (!MONGODB_URI) {
 
 info("connecting to", MONGODB_URI);
 
+app.use(cors())
 app.use(requestLogger);
 app.use(tokenExtractor);
 
