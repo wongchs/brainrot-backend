@@ -2,6 +2,7 @@ import express from "express";
 import Post from "../models/Post";
 import { userExtractor } from "../utils/middleware";
 import { RequestWithUser } from "../types";
+import User from "../models/User";
 
 const postsRouter = express.Router();
 
@@ -52,6 +53,10 @@ postsRouter.delete("/:id", userExtractor, async (req: RequestWithUser, res) => {
   const postToDelete = await Post.findById(req.params.id);
 
   if (user.id.toString() === postToDelete.user.toString()) {
+    user.posts = user.posts.filter(
+      (postId) => postId.toString() !== req.params.id
+    );
+    await User.findByIdAndUpdate(user.id, user);
     await Post.findByIdAndDelete(req.params.id);
     res.status(204).end();
   } else {
