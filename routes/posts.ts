@@ -59,4 +59,24 @@ postsRouter.delete("/:id", userExtractor, async (req: RequestWithUser, res) => {
   }
 });
 
+postsRouter.put("/:id", userExtractor, async (req: RequestWithUser, res) => {
+  const user = req.user;
+  const body = req.body;
+
+  const postToUpdate = await Post.findById(req.params.id);
+
+  if (user.id.toString() === postToUpdate.user.toString()) {
+    const post = {
+      content: body.content,
+    };
+
+    const updatedBlog = await Post.findByIdAndUpdate(req.params.id, post, {
+      new: true,
+    });
+    res.json(updatedBlog);
+  } else {
+    res.status(403).json({ error: "invalid credentials" });
+  }
+});
+
 export default postsRouter;
