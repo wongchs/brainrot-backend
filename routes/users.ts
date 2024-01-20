@@ -31,4 +31,57 @@ usersRouter.get("/", async (_req, res) => {
   res.json(users);
 });
 
+usersRouter.get("/:id", async (req, res) => {
+  const user = await User.findById(req.params.id).populate("posts", {
+    content: 1,
+    id: 1,
+  });
+
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404).json({ error: "user not found" }).end();
+  }
+});
+
+usersRouter.put("/:id", async (req, res) => {
+  const { username, name, password } = req.body;
+
+  const passwordHash = password ? await bcrypt.hash(password, 10) : undefined;
+
+  const userToUpdate = {
+    username: username || undefined,
+    name: name || undefined,
+    passwordHash,
+  };
+
+  Object.keys(userToUpdate).forEach(
+    (key) => userToUpdate[key] === undefined && delete userToUpdate[key]
+  );
+
+  const updatedUser = await User.findByIdAndUpdate(
+    req.params.id,
+    userToUpdate,
+    {
+      new: true,
+    }
+  );
+
+  if (updatedUser) {
+    res.json(updatedUser);
+  } else {
+    res.status(404).json({ error: "user not found" });
+  }
+});
+
+usersRouter.delete("/:id", async (req, res) => {
+  const user = await User.findByIdAndDelete(req.params.id);
+
+  if (user) {
+    res.status(204).end();
+  } else {
+    res.status(404).json({ error: "user not found" });
+  }
+});
+
 export default usersRouter;
