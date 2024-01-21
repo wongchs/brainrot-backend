@@ -1,6 +1,7 @@
 import express from "express";
 import User from "../models/User";
 import bcrypt from "bcrypt";
+import { userExtractor } from "../utils/middleware";
 const usersRouter = express.Router();
 
 usersRouter.post("/", async (req, res) => {
@@ -47,7 +48,7 @@ usersRouter.get("/:id", async (req, res) => {
   }
 });
 
-usersRouter.put("/:id", async (req, res) => {
+usersRouter.put("/:id", userExtractor, async (req, res) => {
   const { username, name, password } = req.body;
 
   const passwordHash = password ? await bcrypt.hash(password, 10) : undefined;
@@ -77,7 +78,7 @@ usersRouter.put("/:id", async (req, res) => {
   }
 });
 
-usersRouter.delete("/:id", async (req, res) => {
+usersRouter.delete("/:id", userExtractor, async (req, res) => {
   const user = await User.findByIdAndDelete(req.params.id);
 
   if (user) {
