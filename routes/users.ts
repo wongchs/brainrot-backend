@@ -27,7 +27,10 @@ usersRouter.post("/", async (req, res) => {
 });
 
 usersRouter.get("/", async (_req, res) => {
-  const users = await User.find({});
+  const users = await User.find({}).populate("posts", {
+    content: 1,
+    id: 1,
+  });
   res.json(users);
 });
 
@@ -81,6 +84,17 @@ usersRouter.delete("/:id", async (req, res) => {
     res.status(204).end();
   } else {
     res.status(404).json({ error: "user not found" });
+  }
+});
+
+usersRouter.get("/:username", async (req, res) => {
+  const user = await User.findOne({ username: req.params.username }).populate(
+    "posts"
+  );
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404).json({ error: "user not found" }).end();
   }
 });
 
