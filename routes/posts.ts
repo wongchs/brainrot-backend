@@ -127,6 +127,7 @@ postsRouter.post(
       text: body.comment,
       username: user.username,
       name: user.name,
+      id: user.id,
     };
     post.comments.push(comment);
 

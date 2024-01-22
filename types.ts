@@ -12,6 +12,7 @@ export interface CommentInterface {
   text: string;
   username: string;
   name: string;
+  id: string;
 }
 
 export interface PostInterface extends Document {
