@@ -84,4 +84,33 @@ postsRouter.put("/:id", userExtractor, async (req: RequestWithUser, res) => {
   }
 });
 
+postsRouter.put(
+  "/:id/like",
+  userExtractor,
+  async (req: RequestWithUser, res) => {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ error: "post not found" });
+    }
+    post.likes += 1;
+    const updatedPost = await post.save();
+    return res.json(updatedPost);
+  }
+);
+
+postsRouter.post(
+  "/:id/comment",
+  userExtractor,
+  async (req: RequestWithUser, res) => {
+    const body = req.body;
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ error: "post not found" });
+    }
+    post.comments.push(body.comment);
+    await post.save();
+    return res.status(201).json(body.comment);
+  }
+);
+
 export default postsRouter;

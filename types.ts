@@ -11,6 +11,8 @@ export interface UserInterface extends Document {
 export interface PostInterface extends Document {
   content: string;
   user: Schema.Types.ObjectId;
+  likes: number;
+  comments: string[];
 }
 
 export interface RequestWithUser extends Request {
