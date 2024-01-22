@@ -88,11 +88,26 @@ postsRouter.put(
   "/:id/like",
   userExtractor,
   async (req: RequestWithUser, res) => {
+    const user = req.user;
     const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ error: "post not found" });
     }
-    post.likes += 1;
+
+    const hasLiked = post.likedBy.some(
+      (userId) => userId.toString() === user.id.toString()
+    );
+
+    if (hasLiked) {
+      post.likes -= 1;
+      post.likedBy = post.likedBy.filter(
+        (userId) => userId.toString() !== user.id.toString()
+      );
+    } else {
+      post.likes += 1;
+      post.likedBy.push(user.id);
+    }
+
     const updatedPost = await post.save();
     return res.json(updatedPost);
   }

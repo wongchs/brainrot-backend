@@ -18,6 +18,7 @@ export interface PostInterface extends Document {
   content: string;
   user: Schema.Types.ObjectId;
   likes: number;
+  likedBy: Schema.Types.ObjectId[];
   comments: CommentInterface[];
 }
 
