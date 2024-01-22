@@ -103,11 +103,18 @@ postsRouter.post(
   userExtractor,
   async (req: RequestWithUser, res) => {
     const body = req.body;
+    const user = req.user;
     const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ error: "post not found" });
     }
-    post.comments.push(body.comment);
+    const comment = {
+      text: body.comment,
+      username: user.username,
+      name: user.name,
+    };
+    post.comments.push(comment);
+
     await post.save();
     return res.status(201).json(body.comment);
   }
