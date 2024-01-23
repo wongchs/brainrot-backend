@@ -6,6 +6,8 @@ export interface UserInterface extends Document {
   name: string;
   passwordHash: string;
   posts: Schema.Types.ObjectId[];
+  following: Schema.Types.ObjectId[];
+  followers: Schema.Types.ObjectId[];
 }
 
 export interface CommentInterface {

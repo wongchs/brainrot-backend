@@ -2,6 +2,7 @@ import express from "express";
 import User from "../models/User";
 import bcrypt from "bcrypt";
 import { userExtractor } from "../utils/middleware";
+import { RequestWithUser } from "../types";
 const usersRouter = express.Router();
 
 usersRouter.post("/", async (req, res) => {
@@ -98,5 +99,63 @@ usersRouter.get("/:username", async (req, res) => {
     res.status(404).json({ error: "user not found" }).end();
   }
 });
+
+usersRouter.put(
+  "/:id/follow",
+  userExtractor,
+  async (req: RequestWithUser, res) => {
+    const userToFollow = await User.findById(req.params.id);
+    const currentUser = req.user;
+
+    if (!userToFollow || !currentUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    currentUser.following.push(userToFollow._id);
+    userToFollow.followers.push(currentUser._id);
+
+    const updatedCurrentUser = await User.findByIdAndUpdate(
+      currentUser._id,
+      currentUser,
+      {
+        new: true,
+      }
+    );
+    await User.findByIdAndUpdate(userToFollow._id, userToFollow);
+
+    return res.json(updatedCurrentUser);
+  }
+);
+
+usersRouter.put(
+  "/:id/unfollow",
+  userExtractor,
+  async (req: RequestWithUser, res) => {
+    const userToUnfollow = await User.findById(req.params.id);
+    const currentUser = req.user;
+
+    if (!userToUnfollow || !currentUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    currentUser.following = currentUser.following.filter(
+      (userId) => userId.toString() !== userToUnfollow._id.toString()
+    );
+    userToUnfollow.followers = userToUnfollow.followers.filter(
+      (userId) => userId.toString() !== currentUser._id.toString()
+    );
+
+    const updatedCurrentUser = await User.findByIdAndUpdate(
+      currentUser._id,
+      currentUser,
+      {
+        new: true,
+      }
+    );
+    await User.findByIdAndUpdate(userToUnfollow._id, userToUnfollow);
+
+    return res.json(updatedCurrentUser);
+  }
+);
 
 export default usersRouter;
