@@ -124,7 +124,7 @@ postsRouter.post(
       return res.status(404).json({ error: "post not found" });
     }
     const comment = {
-      text: body.comment,
+      text: body.text,
       username: user.username,
       name: user.name,
       id: user.id,
