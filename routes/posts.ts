@@ -125,10 +125,11 @@ postsRouter.post(
     }
     const comment = {
       text: body.comment,
-      user: user,
+      username: user.username,
+      name: user.name,
+      id: user.id,
     };
     post.comments.push(comment);
-    console.log(user)
 
     await post.save();
     return res.status(201).json(body.comment);

@@ -10,7 +10,9 @@ export interface UserInterface extends Document {
 
 export interface CommentInterface {
   text: string;
-  user: UserInterface
+  username: string;
+  name: string;
+  id: string;
 }
 
 export interface PostInterface extends Document {
