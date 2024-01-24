@@ -137,6 +137,10 @@ postsRouter.post(
       id: user.id,
     };
     post.comments.push(comment);
+    io.to(post.user.toString()).emit("notification", {
+      message: `${user.username} has commented on your post: ${post.content}...`,
+      postId: post.id,
+    });
 
     await post.save();
     return res.status(201).json(body.comment);

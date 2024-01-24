@@ -3,6 +3,8 @@ import User from "../models/User";
 import bcrypt from "bcrypt";
 import { userExtractor } from "../utils/middleware";
 import { RequestWithUser } from "../types";
+import { io } from "..";
+
 const usersRouter = express.Router();
 
 usersRouter.post("/", async (req, res) => {
@@ -113,6 +115,9 @@ usersRouter.put(
 
     currentUser.following.push(userToFollow._id);
     userToFollow.followers.push(currentUser._id);
+    io.to(userToFollow.id).emit("notification", {
+      message: `${currentUser.username} has followed you`,
+    });
 
     const updatedCurrentUser = await User.findByIdAndUpdate(
       currentUser._id,
