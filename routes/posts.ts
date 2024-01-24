@@ -3,6 +3,7 @@ import Post from "../models/Post";
 import { userExtractor } from "../utils/middleware";
 import { RequestWithUser } from "../types";
 import User from "../models/User";
+import { io } from "..";
 
 const postsRouter = express.Router();
 
@@ -106,6 +107,11 @@ postsRouter.put(
     } else {
       post.likes += 1;
       post.likedBy.push(user.id);
+      io.to(post.user.toString()).emit("notification", {
+        postId: post.id,
+        likedBy: user.id,
+      });
+      console.log(post.user);
     }
 
     const updatedPost = await post.save();

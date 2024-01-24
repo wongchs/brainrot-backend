@@ -1,5 +1,6 @@
 import { MONGODB_URI, PORT } from "./utils/config";
 import express from "express";
+import http from "http";
 import usersRouter from "./routes/users";
 import loginRouter from "./routes/login";
 import postsRouter from "./routes/posts";
@@ -9,6 +10,7 @@ app.use(express.json());
 import { info, errorLog } from "./utils/logger";
 import mongoose from "mongoose";
 import { requestLogger, tokenExtractor } from "./utils/middleware";
+import { Server } from "socket.io";
 
 mongoose.set("strictQuery", false);
 
@@ -18,7 +20,14 @@ if (!MONGODB_URI) {
 
 info("connecting to", MONGODB_URI);
 
-app.use(cors())
+const httpServer = http.createServer(app);
+export const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:5173",
+  },
+});
+
+app.use(cors());
 app.use(requestLogger);
 app.use(tokenExtractor);
 
@@ -36,10 +45,22 @@ app.get("/ping", (_req, res) => {
   res.send("pong");
 });
 
+io.on("connection", (socket) => {
+  console.log("a user connected");
+
+  socket.on("join", (roomId) => {
+    socket.join(roomId);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("someone left");
+  });
+});
+
 app.use("/api/users", usersRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/posts", postsRouter);
 
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
