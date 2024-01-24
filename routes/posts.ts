@@ -108,6 +108,7 @@ postsRouter.put(
       post.likes += 1;
       post.likedBy.push(user.id);
       io.to(post.user.toString()).emit("notification", {
+        message: `Your post with ${post.content}... has been liked by ${user.username}`,
         postId: post.id,
         likedBy: user.id,
       });
