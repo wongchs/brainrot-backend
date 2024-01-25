@@ -7,6 +7,7 @@ import postsRouter from "./routes/posts";
 const app = express();
 import cors from "cors";
 app.use(express.json());
+app.use(express.static('dist'))
 import { info, errorLog } from "./utils/logger";
 import mongoose from "mongoose";
 import { requestLogger, tokenExtractor } from "./utils/middleware";
