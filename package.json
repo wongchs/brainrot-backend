@@ -8,6 +8,7 @@
     "tsc": "tsc",
     "dev": "ts-node-dev index.ts",
     "lint": "eslint --ext .ts .",
+    "build": "tsc",
     "start": "node build/index.js"
   },
   "author": "",
