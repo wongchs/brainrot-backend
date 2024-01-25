@@ -9,3 +9,9 @@ The backend for brainrot. REST API built with express.
 - Socket.IO
 - TypeScript
 - jsonwebtoken
+
+## Frontend
+https://github.com/wongchs/brainrot-frontend
+
+## Deployment
+https://brainrot-backend.onrender.com/
